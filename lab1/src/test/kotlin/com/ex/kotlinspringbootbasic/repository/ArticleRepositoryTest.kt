@@ -1,5 +1,6 @@
 package com.ex.kotlinspringbootbasic.repository
 
+import com.ex.kotlinspringbootbasic.dto.request.AddArticleDto
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -30,6 +31,16 @@ internal class ArticleRepositoryTest {
         val article = articleRepository.getArticle(4L)
 
         assertEquals(null, article?.title)
+    }
+
+    @Test
+    @DisplayName("4. Article 추가")
+    fun addArticle() {
+        val articleDto = AddArticleDto("article4", "content4")
+
+        articleRepository.saveArticle(articleDto)
+
+        assertEquals(4, articleRepository.store.size)
     }
 
 }

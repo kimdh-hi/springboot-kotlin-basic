@@ -1,5 +1,6 @@
 package com.ex.kotlinspringbootbasic.service
 
+import com.ex.kotlinspringbootbasic.dto.request.AddArticleDto
 import com.ex.kotlinspringbootbasic.repository.ArticleRepositoryImpl
 import org.springframework.stereotype.Service
 
@@ -15,4 +16,11 @@ class ArticleService(private val articleRepository : ArticleRepositoryImpl) {
      * Article 단건조회
      */
     fun getArticle(articleId: Long) = articleRepository.getArticle(articleId)
+
+    /**
+     * Article 추가
+     */
+    fun saveArticle(articleDto : AddArticleDto) {
+        articleRepository.saveArticle(articleDto)
+    }
 }

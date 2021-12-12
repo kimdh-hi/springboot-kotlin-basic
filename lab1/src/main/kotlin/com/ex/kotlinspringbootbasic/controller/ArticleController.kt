@@ -1,10 +1,10 @@
 package com.ex.kotlinspringbootbasic.controller
 
+import com.ex.kotlinspringbootbasic.dto.request.AddArticleDto
 import com.ex.kotlinspringbootbasic.service.ArticleService
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/api/articles")
 @RestController
@@ -18,4 +18,9 @@ class ArticleController(
     @GetMapping("/{articleId}")
     fun getArticle(@PathVariable articleId: Long) = articleService.getArticle(articleId)
 
+    @PostMapping
+    fun postArticle(@RequestBody articleDto : AddArticleDto) : ResponseEntity<Any> {
+        articleService.saveArticle(articleDto)
+        return ResponseEntity(HttpStatus.CREATED)
+    }
 }
