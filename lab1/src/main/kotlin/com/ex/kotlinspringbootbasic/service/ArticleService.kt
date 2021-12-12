@@ -1,6 +1,6 @@
 package com.ex.kotlinspringbootbasic.service
 
-import com.ex.kotlinspringbootbasic.dto.request.AddArticleDto
+import com.ex.kotlinspringbootbasic.dto.request.ArticleRequestDto
 import com.ex.kotlinspringbootbasic.repository.ArticleRepositoryImpl
 import org.springframework.stereotype.Service
 
@@ -20,7 +20,16 @@ class ArticleService(private val articleRepository : ArticleRepositoryImpl) {
     /**
      * Article 추가
      */
-    fun saveArticle(articleDto : AddArticleDto) {
-        articleRepository.saveArticle(articleDto)
-    }
+    fun saveArticle(articleDto: ArticleRequestDto) = articleRepository.saveArticle(articleDto)
+
+
+    /**
+     * Article 삭제
+     */
+    fun deleteArticle(articleId: Long) = articleRepository.deleteArticle(articleId)
+
+    /**
+     * Article 수정
+     */
+    fun updateArticle(articleId: Long, articleDto: ArticleRequestDto) = articleRepository.updateArticle(articleId, articleDto)
 }

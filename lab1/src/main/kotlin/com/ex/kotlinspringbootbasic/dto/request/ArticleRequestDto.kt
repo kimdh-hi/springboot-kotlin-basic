@@ -1,6 +1,6 @@
 package com.ex.kotlinspringbootbasic.dto.request
 
-data class AddArticleDto(
+data class ArticleRequestDto(
     var title : String,
     var content: String
 )

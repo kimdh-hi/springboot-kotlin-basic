@@ -1,18 +1,14 @@
 package com.ex.kotlinspringbootbasic.controller
 
-import com.ex.kotlinspringbootbasic.dto.request.AddArticleDto
+import com.ex.kotlinspringbootbasic.dto.request.ArticleRequestDto
 import com.google.gson.Gson
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
-import org.springframework.http.RequestEntity.post
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.*
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -50,7 +46,7 @@ internal class ArticleControllerTest {
     @DisplayName("Article 저장 API")
     @Test
     fun 추가() {
-        val articleDto = AddArticleDto("article4", "content4")
+        val articleDto = ArticleRequestDto("article4", "content4")
         val articleDtoJson:String = Gson().toJson(articleDto)
 
         mockMvc.post("/api/articles") {
@@ -61,5 +57,31 @@ internal class ArticleControllerTest {
         }.andDo {
             print()
         }
+    }
+
+    @DisplayName("Article 삭제 API")
+    @Test
+    fun 삭제() {
+        mockMvc.delete("/api/articles/{articleId}", 3L)
+            .andExpect {
+                status { isOk() }
+            }
+            .andDo { print() }
+    }
+
+    @Test
+    @DisplayName("Article 수정 API")
+    fun 수정() {
+        val updateRequestDto = ArticleRequestDto("updatedTitle", "updatedContent")
+        val updateRequestDtoJosn = Gson().toJson(updateRequestDto)
+        mockMvc.put("/api/articles/{articleId}", 1L)
+            {
+                contentType = MediaType.APPLICATION_JSON
+                content = updateRequestDtoJosn
+            }
+            .andDo { print() }
+            .andExpect {
+                status { isOk() }
+            }
     }
 }
