@@ -4,10 +4,11 @@ import com.ex.kotlinspringbootbasic.domain.Article
 import com.ex.kotlinspringbootbasic.dto.request.ArticleRequestDto
 import org.springframework.stereotype.Repository
 import java.lang.IllegalArgumentException
+import java.util.concurrent.ConcurrentHashMap
 
 @Repository
 class ArticleRepositoryImpl : ArticleRepository {
-    var sequence: Long = 0L
+    var sequence:  Long = 0L
     var store = mutableMapOf<Long, Article>(
         ++sequence to Article("article1", "content1"),
         ++sequence to Article("article2", "content2"),

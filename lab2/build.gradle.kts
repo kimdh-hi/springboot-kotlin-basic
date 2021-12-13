@@ -5,7 +5,23 @@ plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.5.31"
     kotlin("plugin.spring") version "1.5.31"
+
+    // for JPA
     kotlin("plugin.jpa") version "1.5.31"
+    id ("org.jetbrains.kotlin.plugin.allopen") version "1.5.21"
+    id ("org.jetbrains.kotlin.plugin.noarg") version "1.5.21"
+}
+
+// for Jpa Entity
+noArg {
+    annotation("javax.persistence.Entity")
+}
+
+// for Jpa Entity
+allOpen {
+    annotation("javax.persistence.Entity")
+    annotation("javax.persistence.MappedSuperclass")
+    annotation("javax.persistence.Embeddable")
 }
 
 group = "com.example"

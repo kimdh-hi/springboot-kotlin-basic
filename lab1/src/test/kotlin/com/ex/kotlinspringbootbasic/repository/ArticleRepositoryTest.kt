@@ -1,5 +1,6 @@
 package com.ex.kotlinspringbootbasic.repository
 
+import com.ex.kotlinspringbootbasic.domain.Article
 import com.ex.kotlinspringbootbasic.dto.request.ArticleRequestDto
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
