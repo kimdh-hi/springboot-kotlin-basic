@@ -16,7 +16,9 @@ class MemberService(
 ) {
 
     @Transactional
-    fun saveMember(memberDto: MemberDto) = memberRepository.save(memberDto.toEntity())
+    fun saveMember(memberDto: MemberDto) {
+        memberRepository.save(memberDto.toEntity())
+    }
 
     @Transactional(readOnly = true)
     fun getAllMembers(): List<MemberResponseDto> = memberRepository.findAll().stream().map { m -> MemberResponseDto(m.id, m.username) }.collect(Collectors.toList())

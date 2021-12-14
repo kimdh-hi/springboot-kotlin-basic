@@ -21,10 +21,10 @@ class BoardRepositoryTest {
         member = Member("member1" , "password1")
         userRepository.save(member)
 
-        val board1: Board = Board("title1", "content1")
+        val board1: Board = Board("title1", "content1", member)
         board1.addMember(member)
 
-        val board2: Board = Board("title2", "content2")
+        val board2: Board = Board("title2", "content2", member)
         board2.addMember(member)
 
         boardRepository.saveAll(listOf(board1, board2))

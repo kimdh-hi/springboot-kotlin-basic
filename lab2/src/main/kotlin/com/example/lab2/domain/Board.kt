@@ -6,7 +6,8 @@ import javax.persistence.*
 @Entity
 class Board(
     title: String,
-    content: String
+    content: String,
+    member: Member
 ) {
 
     @Id
@@ -22,7 +23,8 @@ class Board(
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
-    var member: Member? = null
+    var member: Member = member
+        protected set
 
     fun addMember(member: Member){
         this.member = member
@@ -32,5 +34,9 @@ class Board(
     fun updateBoard(updateDto: BoardUpdateDto) {
         this.title = updateDto.title
         this.content = updateDto.content
+    }
+
+    fun modifyMember(member: Member) {
+        this.member = member
     }
 }
