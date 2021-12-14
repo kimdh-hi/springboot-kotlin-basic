@@ -7,8 +7,8 @@ import javax.persistence.*
 @Table(name = "MEMBRE_TBL")
 class Member (
     username: String,
-    password: String
-    ) {
+    password: String,
+    ) : Timestamped() {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

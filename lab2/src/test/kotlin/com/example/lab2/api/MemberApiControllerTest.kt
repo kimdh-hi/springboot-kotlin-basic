@@ -33,7 +33,7 @@ class MemberApiControllerTest {
     @Test
     @DisplayName("GET /api/member/{memberId}")
     fun `회원 단건조회` () {
-        mockMvc.get("/api/member/{memberId}", testMember.id)
+        mockMvc.get("/api/members/{memberId}", testMember.id)
             .andExpect {
                 content {
                     contentType(MediaType.APPLICATION_JSON)
@@ -44,13 +44,13 @@ class MemberApiControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/member")
+    @DisplayName("POST /api/member/signup")
     fun `회원가입` () {
 
         val memberDto: MemberDto = MemberDto("saveUsername", "savePassword")
         val memberDtoJson = objectMapper.writeValueAsString(memberDto)
 
-        mockMvc.post("/api/member")
+        mockMvc.post("/api/members")
         {
             contentType = MediaType.APPLICATION_JSON
             content = memberDtoJson
@@ -65,7 +65,7 @@ class MemberApiControllerTest {
 
         val updateDto = MemberDto("updateUsername", "updatePassword")
 
-        mockMvc.put("/api/member/{memberId}", testMember.id)
+        mockMvc.put("/api/members/{memberId}", testMember.id)
             {
                 contentType = MediaType.APPLICATION_JSON
                 content = objectMapper.writeValueAsString(updateDto)
@@ -81,6 +81,6 @@ class MemberApiControllerTest {
     @DisplayName("DELETE /api/member/{memberId}")
     fun `회원삭제` () {
 
-        mockMvc.delete("/api/member/{memberId}", testMember.id)
+        mockMvc.delete("/api/members/{memberId}", testMember.id)
     }
 }

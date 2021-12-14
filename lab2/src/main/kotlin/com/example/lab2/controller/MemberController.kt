@@ -5,14 +5,14 @@ import com.example.lab2.service.MemberService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-@RequestMapping("/api/member")
+@RequestMapping("/api/members")
 @RestController
 class MemberController(private val memberService: MemberService) {
 
     @GetMapping("/{memberId}")
     fun getMember(@PathVariable memberId: Long) = ResponseEntity.ok().body(memberService.getMember(memberId))
 
-    @PostMapping
+    @PostMapping("/signup")
     fun postMember(@RequestBody memberDto: MemberDto) = ResponseEntity.status(201).body(memberService.saveMember(memberDto))
 
     @PutMapping("/{memberId}")

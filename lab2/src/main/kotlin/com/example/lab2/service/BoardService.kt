@@ -15,6 +15,9 @@ class BoardService (
     ) {
 
     @Transactional
+    fun getBoards() = boardRepository.findAll()
+
+    @Transactional
     fun saveBoard(member: Member, boardDto: BoardDto) = boardRepository.save(Board(boardDto.title, boardDto.content, member))
 
     @Transactional(readOnly = true)

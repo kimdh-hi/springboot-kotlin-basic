@@ -5,6 +5,7 @@ import com.example.lab2.dto.request.MemberDto
 import com.example.lab2.dto.response.MemberResponseDto
 import com.example.lab2.repository.MemberRepository
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.lang.IllegalArgumentException
@@ -12,11 +13,13 @@ import java.util.stream.Collectors
 
 @Service
 class MemberService(
-    private val memberRepository: MemberRepository
+    private val memberRepository: MemberRepository,
+    private val passwordEncoder: PasswordEncoder
 ) {
 
     @Transactional
     fun saveMember(memberDto: MemberDto) {
+        memberDto.password = passwordEncoder.encode(memberDto.password)
         memberRepository.save(memberDto.toEntity())
     }
 
