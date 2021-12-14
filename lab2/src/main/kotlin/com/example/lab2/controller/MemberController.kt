@@ -2,18 +2,24 @@ package com.example.lab2.controller
 
 import com.example.lab2.dto.request.MemberDto
 import com.example.lab2.service.MemberService
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.util.logging.Logger
 
 @RequestMapping("/api/members")
 @RestController
-class MemberController(private val memberService: MemberService) {
+class MemberController(private val memberService: MemberService ) {
+
+    @PostMapping("/signup")
+    fun signup(@RequestBody memberDto: MemberDto) = ResponseEntity.status(201).body(memberService.saveMember(memberDto))
+
+    @PostMapping("/signin")
+    fun signin(@RequestBody memberDto: MemberDto) = ResponseEntity.ok().body(memberService.signin(memberDto))
+
 
     @GetMapping("/{memberId}")
     fun getMember(@PathVariable memberId: Long) = ResponseEntity.ok().body(memberService.getMember(memberId))
-
-    @PostMapping("/signup")
-    fun postMember(@RequestBody memberDto: MemberDto) = ResponseEntity.status(201).body(memberService.saveMember(memberDto))
 
     @PutMapping("/{memberId}")
     fun putMember(
