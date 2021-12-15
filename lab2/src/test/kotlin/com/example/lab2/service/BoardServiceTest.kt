@@ -2,11 +2,9 @@ package com.example.lab2.service
 
 import com.example.lab2.domain.Board
 import com.example.lab2.domain.Member
-import com.example.lab2.dto.request.BoardDto
 import com.example.lab2.dto.request.BoardUpdateDto
 import com.example.lab2.repository.BoardRepository
 import com.example.lab2.repository.MemberRepository
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -36,10 +34,7 @@ class BoardServiceTest {
     @Test
     @DisplayName("Board 저장")
     fun `board 저장`() {
-        val boardDto: BoardDto = BoardDto("title1", "comment1")
-        boardService.saveBoard(member, boardDto)
 
-        assertEquals(1, boardRepository.findAll().size)
     }
 
     @Test

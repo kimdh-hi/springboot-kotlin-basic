@@ -35,10 +35,6 @@ class WebSecurityConfig(
     @Bean
     fun passwordEncoder() = BCryptPasswordEncoder()
 
-    override fun configure(auth: AuthenticationManagerBuilder?) {
-        auth?.userDetailsService(userDetailsService)?.passwordEncoder(passwordEncoder())
-    }
-
     @Bean
     override fun authenticationManagerBean(): AuthenticationManager {
         return super.authenticationManagerBean()
