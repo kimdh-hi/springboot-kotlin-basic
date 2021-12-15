@@ -31,18 +31,33 @@ class BoardService(
         val board = Board(title, content, member)
         boardRepository.save(board)
 
-        println("title = " + title)
-        println("content = " + content)
-        println("file = " + file?.originalFilename)
-
         val originalFilename: String? = file?.originalFilename
         val saveFileName = getSaveFileName(originalFilename)
 
-        println("originalFilename = " + originalFilename)
-        println("saveFileName = " + saveFileName)
+        saveFile(file, originalFilename, saveFileName, board)
+    }
 
+    @Transactional
+    fun saveBoardWithFiles(member: Member, title: String, content: String, files: List<MultipartFile>?) {
+        val board = Board(title, content, member)
+        boardRepository.save(board)
 
+        if (files?.isNotEmpty() as Boolean) {
+            for (file in files) {
+                val originalFilename: String? = file?.originalFilename
+                val saveFileName = getSaveFileName(originalFilename)
 
+                saveFile(file, originalFilename, saveFileName, board)
+            }
+        }
+    }
+
+    private fun saveFile(
+        file: MultipartFile?,
+        originalFilename: String?,
+        saveFileName: String,
+        board: Board
+    ) {
         if (file != null && originalFilename != null) {
             val boardImage = BoardImage(originalFilename, saveFileName, board)
             file.transferTo(File(uploadeDir + saveFileName))

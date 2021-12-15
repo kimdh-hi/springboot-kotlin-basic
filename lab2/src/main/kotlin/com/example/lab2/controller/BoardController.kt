@@ -26,6 +26,20 @@ class BoardController (private val boardService: BoardService) {
 
         val member = userDetails.member
         boardService.saveBoard(member, title, content, file)
+
+        return ResponseEntity.ok().body("저장완료")
+    }
+
+    @PostMapping("/files")
+    fun postBoardWithFiles(
+        @AuthenticationPrincipal userDetails: UserDetailsImpl,
+        @RequestParam title: String,
+        @RequestParam content: String,
+        @RequestParam(required = false) files: List<MultipartFile>?): ResponseEntity<String> {
+
+        val member = userDetails.member
+        boardService.saveBoardWithFiles(member, title, content, files)
+
         return ResponseEntity.ok().body("저장완료")
     }
 }

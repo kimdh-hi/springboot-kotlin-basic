@@ -35,10 +35,6 @@ class BoardApiControllerTest {
     fun beforeAll() {
         testMember = Member("test", passwordEncoder.encode("test"))
         memberRepository.save(testMember)
-    }
-
-    @BeforeEach
-    fun beforeEach() {
         token = jwtUtils.createToken(testMember.username)
     }
 
@@ -68,5 +64,30 @@ class BoardApiControllerTest {
 
         Assertions.assertEquals(1, boardImages.size)
         Assertions.assertEquals("test.txt", boardImages.get(0).originalFileName)
+    }
+
+    @Test
+    @DisplayName("업로드 테스트 - 파일 여러개")
+    fun `Board 저장 - 여러개 파일 업로드`() {
+        val file1 = MockMultipartFile("files", "test1.txt", "text/plain", "test1 - hello".byteInputStream(StandardCharsets.UTF_8))
+        val file2 = MockMultipartFile("files", "test2.txt", "text/plain", "test2 - hello".byteInputStream(StandardCharsets.UTF_8))
+
+        mockMvc.multipart("/api/boards/files")
+        {
+            file(file1).file(file2)
+                .part(MockPart("title", "title1".toByteArray(StandardCharsets.UTF_8)))
+                .part(MockPart("content", "content1".toByteArray(StandardCharsets.UTF_8)))
+            headers {
+                header("Authorization", "bearer ".plus(token))
+            }
+        }
+            .andDo {
+                print()
+            }
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
     }
 }

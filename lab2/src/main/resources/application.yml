@@ -8,3 +8,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+
+cloud:
+  aws:
+    credentials:
+      accessKey: IAM Access Key
+      secretKey: IAM Secret Key
+    s3:
+      bucket: dhk-bucket
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
