@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 import java.io.InputStream
 import java.util.*
 
@@ -24,11 +22,8 @@ class S3Uploader(
     private val amazonS3Client: AmazonS3Client
 ) {
 
-    @Value("\${cloud.aws.credentials.accessKey}") lateinit var accessKey: String
-    @Value("\${cloud.aws.credentials.secretKey}") lateinit var secretKey: String
-    @Value("\${cloud.aws.region.static}") lateinit var region: String
-    @Value("\${cloud.aws.s3.bucket.name}") lateinit var bucket: String
-    @Value("\${cloud.aws.s3.bucket.url}") lateinit var bucketUrl: String
+    @Value("\${cloud.aws.s3.bucket}") lateinit var bucket: String
+    @Value("\${aws.s3.bucket.url}") lateinit var bucketUrl: String
 
     fun upload(multipartFile: MultipartFile): S3UploadResponseDto {
         val inputStream = multipartFile.inputStream

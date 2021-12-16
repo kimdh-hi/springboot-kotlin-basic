@@ -15,12 +15,16 @@ cloud:
       accessKey: ${AWS_ACCESS_KEY}
       secretKey: ${AWS_SECRET_KEY}
     s3:
-      bucket:
-        name: dhk-bucket
-        url: https://dhk-bucket.s3.ap-northeast-2.amazonaws.com/
+      bucket: dhk-bucket
     region:
       static: ap-northeast-2
     stack:
       auto: false
+
+aws:
+  s3:
+    bucket:
+      url: https://dhk-bucket.s3.ap-northeast-2.amazonaws.com/
+
 
 

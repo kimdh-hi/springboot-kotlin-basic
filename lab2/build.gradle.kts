@@ -1,13 +1,15 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 
 plugins {
     id("org.springframework.boot") version "2.5.7"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
+
     kotlin("jvm") version "1.5.31"
     kotlin("plugin.spring") version "1.5.31"
-
-    // for JPA
+    kotlin("kapt") version "1.5.31"
     kotlin("plugin.jpa") version "1.5.31"
+
     id ("org.jetbrains.kotlin.plugin.allopen") version "1.5.21"
     id ("org.jetbrains.kotlin.plugin.noarg") version "1.5.21"
 }
@@ -42,7 +44,18 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    // AWS SDK
     implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+
+    // QueryDsl
+    implementation("com.querydsl:querydsl-jpa")
+    kapt(group = "com.querydsl", name = "querydsl-apt", classifier = "jpa")
+    sourceSets.main {
+        withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
+            kotlin.srcDir("$buildDir/generated/source/kapt/main")
+        }
+    }
+
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
