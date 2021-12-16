@@ -1,4 +1,4 @@
-package com.example.lab2.dto.request
+package com.example.lab2.dto.request.board
 
 import org.springframework.web.multipart.MultipartFile
 

@@ -1,6 +1,5 @@
 package com.example.lab2.controller
 
-import com.example.lab2.dto.request.BoardSaveDto
 import com.example.lab2.security.UserDetailsImpl
 import com.example.lab2.service.BoardService
 import org.springframework.http.ResponseEntity

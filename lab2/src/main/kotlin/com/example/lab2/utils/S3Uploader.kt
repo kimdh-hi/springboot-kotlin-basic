@@ -23,7 +23,7 @@ class S3Uploader(
 ) {
 
     @Value("\${cloud.aws.s3.bucket}") lateinit var bucket: String
-    @Value("\${aws.s3.bucket.url}") lateinit var bucketUrl: String
+    @Value("\${cloud.aws.s3.bucket.url}") lateinit var bucketUrl: String
 
     fun upload(multipartFile: MultipartFile): S3UploadResponseDto {
         val inputStream = multipartFile.inputStream
@@ -46,6 +46,8 @@ class S3Uploader(
         ).withCannedAcl(CannedAccessControlList.PublicRead)
 
         val upload: Upload = transferManager.upload(putRequest)
+
+        println(upload)
 
         try {
             upload.waitForCompletion()

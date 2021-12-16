@@ -1,4 +1,4 @@
-package com.example.lab2.dto.request
+package com.example.lab2.dto.request.member
 
 import com.example.lab2.domain.Member
 

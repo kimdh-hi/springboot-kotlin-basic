@@ -1,6 +1,6 @@
 package com.example.lab2.domain
 
-import com.example.lab2.dto.request.BoardUpdateDto
+import com.example.lab2.dto.request.board.BoardUpdateDto
 import javax.persistence.*
 
 @Entity

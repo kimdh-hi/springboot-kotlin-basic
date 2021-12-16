@@ -1,4 +1,4 @@
-package com.example.lab2.repository.querydsl
+package com.example.lab2.repository.querydsl.board
 
 interface BoardQueryRepository {
 

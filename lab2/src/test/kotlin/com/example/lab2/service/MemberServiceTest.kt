@@ -1,10 +1,9 @@
 package com.example.lab2.service
 
 import com.example.lab2.domain.Member
-import com.example.lab2.dto.request.MemberDto
+import com.example.lab2.dto.request.member.MemberDto
 import com.example.lab2.dto.response.MemberResponseDto
 import com.example.lab2.repository.MemberRepository
-import org.aspectj.lang.annotation.Before
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName

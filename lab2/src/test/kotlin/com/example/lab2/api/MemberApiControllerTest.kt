@@ -1,8 +1,8 @@
 package com.example.lab2.api
 
 import com.example.lab2.domain.Member
-import com.example.lab2.dto.request.MemberDto
-import com.example.lab2.dto.request.SigninDto
+import com.example.lab2.dto.request.member.MemberDto
+import com.example.lab2.dto.request.member.SigninDto
 import com.example.lab2.repository.MemberRepository
 import com.example.lab2.security.UserDetailsServiceImpl
 import com.fasterxml.jackson.databind.ObjectMapper

@@ -2,7 +2,7 @@ package com.example.lab2.service
 
 import com.example.lab2.domain.Board
 import com.example.lab2.domain.Member
-import com.example.lab2.dto.request.BoardUpdateDto
+import com.example.lab2.dto.request.board.BoardUpdateDto
 import com.example.lab2.repository.BoardRepository
 import com.example.lab2.repository.MemberRepository
 import org.junit.jupiter.api.Assertions.*

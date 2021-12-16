@@ -1,7 +1,7 @@
 package com.example.lab2.service
 
 import com.example.lab2.domain.Member
-import com.example.lab2.dto.request.MemberDto
+import com.example.lab2.dto.request.member.MemberDto
 import com.example.lab2.dto.response.MemberResponseDto
 import com.example.lab2.repository.MemberRepository
 import com.example.lab2.utils.JwtUtils
@@ -9,9 +9,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.lang.IllegalArgumentException

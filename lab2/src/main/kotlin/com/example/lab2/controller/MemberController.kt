@@ -1,11 +1,9 @@
 package com.example.lab2.controller
 
-import com.example.lab2.dto.request.MemberDto
+import com.example.lab2.dto.request.member.MemberDto
 import com.example.lab2.service.MemberService
-import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.logging.Logger
 
 @RequestMapping("/api/members")
 @RestController
@@ -24,7 +22,8 @@ class MemberController(private val memberService: MemberService ) {
     @PutMapping("/{memberId}")
     fun putMember(
         @PathVariable memberId: Long,
-        @RequestBody memberDto: MemberDto) = ResponseEntity.ok().body(memberService.updateMember(memberId, memberDto))
+        @RequestBody memberDto: MemberDto
+    ) = ResponseEntity.ok().body(memberService.updateMember(memberId, memberDto))
 
     @DeleteMapping("/{memberId}")
     fun deleteMember(@PathVariable memberId: Long) = ResponseEntity.ok().body(memberService.deleteMember(memberId))
