@@ -114,6 +114,12 @@ class BoardApiControllerTest {
                     isOk()
                 }
             }
+
+        val boardImages = boardImageRepository.findAll()
+
+        Assertions.assertEquals(2, boardImages.size)
+        Assertions.assertEquals("test1.txt", boardImages.get(0).originalFileName)
+        Assertions.assertEquals("test2.txt", boardImages.get(1).originalFileName)
     }
 
 

@@ -1,9 +1,11 @@
 package com.example.lab2.utils
 
+import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.CannedAccessControlList
 import com.amazonaws.services.s3.model.PutObjectRequest
 import com.example.lab2.dto.response.S3UploadResponseDto
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
@@ -14,10 +16,10 @@ import java.util.UUID
 
 
 @Component
-class S3UploaderV2(private val amazonS3Client: AmazonS3Client) {
+class S3UploaderV2() {
 
-    @Value("\${cloud.aws.s3.bucket}")
-    lateinit var bucket: String
+    @Value("\${cloud.aws.s3.bucket}") lateinit var bucket: String
+    @Autowired lateinit var amazonS3Client: AmazonS3
 
     @Throws(IOException::class)
     fun upload(multipartFile: MultipartFile, dirName: String?): S3UploadResponseDto {
@@ -31,19 +33,17 @@ class S3UploaderV2(private val amazonS3Client: AmazonS3Client) {
     private fun upload(uploadFile: File?, dirName: String?): String? {
         val fileName = dirName + "/" + UUID.randomUUID() + uploadFile?.getName() // S3에 저장된 파일 이름
         val uploadImageUrl = putS3(uploadFile, fileName) // s3로 업로드
+
+        println("fileName = " + fileName)
+        println("uploadImageUrl = " + uploadImageUrl)
+
         removeNewFile(uploadFile)
         return uploadImageUrl
     }
 
     // S3로 업로드
     private fun putS3(uploadFile: File?, fileName: String): String {
-        amazonS3Client.putObject(
-            PutObjectRequest(
-                bucket,
-                fileName,
-                uploadFile
-            ).withCannedAcl(CannedAccessControlList.PublicRead)
-        )
+        amazonS3Client.putObject(bucket, fileName, uploadFile)
         return amazonS3Client.getUrl(bucket, fileName).toString()
     }
 
