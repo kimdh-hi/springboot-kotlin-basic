@@ -3,9 +3,11 @@ package com.example.lab2.service
 import com.example.lab2.domain.Board
 import com.example.lab2.domain.BoardImage
 import com.example.lab2.domain.Member
+import com.example.lab2.dto.request.BoardSaveDto
 import com.example.lab2.dto.request.BoardUpdateDto
 import com.example.lab2.repository.BoardImageRepository
 import com.example.lab2.repository.BoardRepository
+import com.example.lab2.utils.S3Uploader
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -18,6 +20,7 @@ import java.util.*
 class BoardService(
     private val boardRepository: BoardRepository,
     private val boardImageRepository: BoardImageRepository,
+    private val s3Uploader: S3Uploader
 ) {
 
     val uploadeDir = "C:\\Users\\zbeld\\Documents\\etc\\"
@@ -48,6 +51,20 @@ class BoardService(
                 val saveFileName = getSaveFileName(originalFilename)
 
                 saveFile(file, originalFilename, saveFileName, board)
+            }
+        }
+    }
+
+    @Transactional
+    fun saveBoardV2(member: Member, title: String, content: String, files: List<MultipartFile>?) {
+        val board = Board(title, content, member)
+        boardRepository.save(board)
+
+        if (files?.isNotEmpty() as Boolean) {
+            for (file in files) {
+                val uploadResponseDto = s3Uploader.upload(file)
+                val boardImage = BoardImage(uploadResponseDto.originalFileName, uploadResponseDto.saveFileName, board)
+                boardImageRepository.save(boardImage)
             }
         }
     }
@@ -85,4 +102,6 @@ class BoardService(
 
     @Transactional
     fun deleteBoard(id: Long) = boardRepository.deleteById(id)
+
+
 }

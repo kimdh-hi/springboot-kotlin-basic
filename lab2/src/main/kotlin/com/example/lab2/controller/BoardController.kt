@@ -1,5 +1,6 @@
 package com.example.lab2.controller
 
+import com.example.lab2.dto.request.BoardSaveDto
 import com.example.lab2.security.UserDetailsImpl
 import com.example.lab2.service.BoardService
 import org.springframework.http.ResponseEntity
@@ -17,7 +18,7 @@ class BoardController (private val boardService: BoardService) {
     @GetMapping("/{id}")
     fun getBoard(@PathVariable id: Long) = ResponseEntity.ok().body(boardService.getBoard(id))
 
-    @PostMapping
+    @PostMapping("/v1")
     fun postBoard(
         @AuthenticationPrincipal userDetails: UserDetailsImpl,
         @RequestParam title: String,
@@ -30,7 +31,7 @@ class BoardController (private val boardService: BoardService) {
         return ResponseEntity.ok().body("저장완료")
     }
 
-    @PostMapping("/files")
+    @PostMapping("/v1/files")
     fun postBoardWithFiles(
         @AuthenticationPrincipal userDetails: UserDetailsImpl,
         @RequestParam title: String,
@@ -39,6 +40,19 @@ class BoardController (private val boardService: BoardService) {
 
         val member = userDetails.member
         boardService.saveBoardWithFiles(member, title, content, files)
+
+        return ResponseEntity.ok().body("저장완료")
+    }
+
+    @PostMapping("/v2")
+    fun postBoardV2(
+        @AuthenticationPrincipal userDetails: UserDetailsImpl,
+        @RequestParam title: String,
+        @RequestParam content: String,
+        @RequestParam(required = false) files: List<MultipartFile>?): ResponseEntity<String> {
+
+        val member = userDetails.member
+        boardService.saveBoardV2(member, title, content, files)
 
         return ResponseEntity.ok().body("저장완료")
     }

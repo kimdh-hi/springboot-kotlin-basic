@@ -44,7 +44,7 @@ class BoardApiControllerTest {
 
         val imagePart = MockMultipartFile("file","test.txt" , "text/plain" , "hello file".byteInputStream(StandardCharsets.UTF_8))
 
-        mockMvc.multipart("/api/boards")
+        mockMvc.multipart("/api/boards/v1")
         {
             file(imagePart)
                 .part(MockPart("title", "title1".toByteArray(StandardCharsets.UTF_8)))
@@ -72,7 +72,7 @@ class BoardApiControllerTest {
         val file1 = MockMultipartFile("files", "test1.txt", "text/plain", "test1 - hello".byteInputStream(StandardCharsets.UTF_8))
         val file2 = MockMultipartFile("files", "test2.txt", "text/plain", "test2 - hello".byteInputStream(StandardCharsets.UTF_8))
 
-        mockMvc.multipart("/api/boards/files")
+        mockMvc.multipart("/api/boards/v1/files")
         {
             file(file1).file(file2)
                 .part(MockPart("title", "title1".toByteArray(StandardCharsets.UTF_8)))
@@ -90,4 +90,31 @@ class BoardApiControllerTest {
                 }
             }
     }
+
+    @Test
+    @DisplayName("업로드 테스트 - S3 파일업로드")
+    fun `Board 저장 - S3 파일업로드`() {
+        val file1 = MockMultipartFile("files", "test1.txt", "text/plain", "test1 - hello".byteInputStream(StandardCharsets.UTF_8))
+        val file2 = MockMultipartFile("files", "test2.txt", "text/plain", "test2 - hello".byteInputStream(StandardCharsets.UTF_8))
+
+        mockMvc.multipart("/api/boards/v2")
+        {
+            file(file1).file(file2)
+                .part(MockPart("title", "title1".toByteArray(StandardCharsets.UTF_8)))
+                .part(MockPart("content", "content1".toByteArray(StandardCharsets.UTF_8)))
+            headers {
+                header("Authorization", "bearer ".plus(token))
+            }
+        }
+            .andDo {
+                print()
+            }
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+    }
+
+
 }

@@ -12,11 +12,15 @@ spring:
 cloud:
   aws:
     credentials:
-      accessKey: IAM Access Key
-      secretKey: IAM Secret Key
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}
     s3:
-      bucket: dhk-bucket
+      bucket:
+        name: dhk-bucket
+        url: https://dhk-bucket.s3.ap-northeast-2.amazonaws.com/
     region:
       static: ap-northeast-2
     stack:
       auto: false
+
+
