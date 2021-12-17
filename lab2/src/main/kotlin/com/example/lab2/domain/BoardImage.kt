@@ -5,8 +5,7 @@ import javax.persistence.*
 @Entity
 class BoardImage(
     originalFileName: String,
-    saveFileName: String,
-    board: Board) {
+    saveFileName: String) {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,5 +18,5 @@ class BoardImage(
     val originalFileName: String = originalFileName
 
     @ManyToOne(fetch = FetchType.LAZY)
-    val board: Board = board
+    var board: Board? = null
 }

@@ -12,7 +12,9 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.transaction.annotation.Transactional
 
+@Transactional
 @SpringBootTest
 class BoardServiceTest {
 
@@ -31,19 +33,14 @@ class BoardServiceTest {
         boardRepository.save(board)
     }
 
-    @Test
-    @DisplayName("Board 저장")
-    fun `board 저장`() {
-
-    }
 
     @Test
     @DisplayName("Board 단건조회")
     fun `board 단건조회`() {
-        val findBoard: Board? = boardService.getBoard(board.id)
+        val findBoard = boardService.getBoard(board.id as Long)
 
         assertNotNull(findBoard)
-        assertEquals("title0", findBoard?.title)
+        assertEquals("title0", findBoard.title)
     }
 
     @Test

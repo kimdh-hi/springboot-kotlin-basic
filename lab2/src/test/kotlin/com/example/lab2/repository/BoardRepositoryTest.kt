@@ -22,10 +22,8 @@ class BoardRepositoryTest {
         userRepository.save(member)
 
         val board1: Board = Board("title1", "content1", member)
-        board1.addMember(member)
 
         val board2: Board = Board("title2", "content2", member)
-        board2.addMember(member)
 
         boardRepository.saveAll(listOf(board1, board2))
     }

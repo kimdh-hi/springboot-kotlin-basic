@@ -4,6 +4,9 @@ import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.CannedAccessControlList
 import com.amazonaws.services.s3.model.PutObjectRequest
+import com.amazonaws.services.s3.model.S3Object
+import com.amazonaws.services.s3.model.S3ObjectInputStream
+import com.amazonaws.util.IOUtils
 import com.example.lab2.dto.response.S3UploadResponseDto
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -16,7 +19,7 @@ import java.util.UUID
 
 
 @Component
-class S3UploaderV2() {
+class S3Utils() {
 
     @Value("\${cloud.aws.s3.bucket}") lateinit var bucket: String
     @Autowired lateinit var amazonS3Client: AmazonS3
@@ -27,6 +30,17 @@ class S3UploaderV2() {
         val s3UploadUrl = upload(uploadFile, dirName)
 
         return S3UploadResponseDto(multipartFile.originalFilename as String, s3UploadUrl as String)
+    }
+
+    @Throws(IOException::class)
+    fun download(fileName: String): ByteArray? {
+        val s3Object: S3Object? = amazonS3Client.getObject(bucket, fileName)
+        val s3ObjectContent: S3ObjectInputStream? = s3Object?.objectContent
+        val bytes = s3ObjectContent?.run {
+            IOUtils.toByteArray(s3ObjectContent)
+        }
+
+        return bytes
     }
 
     // S3로 파일 업로드하기

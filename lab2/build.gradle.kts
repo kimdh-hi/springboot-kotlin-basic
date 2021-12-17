@@ -19,7 +19,8 @@ noArg {
     annotation("javax.persistence.Entity")
 }
 
-// for Jpa Entity
+// kotlin은 기본이 final class이다.
+// Lazy-loading을 위해 엔티티 관련 클래스를 상속받아 프록시 객체를 만들 수 있도록 지정한 어노테이션이 붙은 클래스에 open 키워드를 추가한다.
 allOpen {
     annotation("javax.persistence.Entity")
     annotation("javax.persistence.MappedSuperclass")

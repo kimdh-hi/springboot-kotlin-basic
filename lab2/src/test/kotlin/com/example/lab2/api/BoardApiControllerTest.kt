@@ -2,6 +2,7 @@ package com.example.lab2.api
 
 import com.example.lab2.domain.Member
 import com.example.lab2.repository.BoardImageRepository
+import com.example.lab2.repository.BoardRepository
 import com.example.lab2.repository.MemberRepository
 import com.example.lab2.utils.JwtUtils
 import org.junit.jupiter.api.*
@@ -12,6 +13,7 @@ import org.springframework.mock.web.MockMultipartFile
 import org.springframework.mock.web.MockPart
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.multipart
 import org.springframework.transaction.annotation.Transactional
 import java.nio.charset.StandardCharsets
@@ -27,6 +29,7 @@ class BoardApiControllerTest {
     @Autowired lateinit var passwordEncoder: PasswordEncoder
     @Autowired lateinit var jwtUtils: JwtUtils
     @Autowired lateinit var boardImageRepository: BoardImageRepository
+    @Autowired lateinit var boardRepository: BoardRepository
 
     lateinit var token: String
     lateinit var testMember: Member
@@ -89,6 +92,11 @@ class BoardApiControllerTest {
                     isOk()
                 }
             }
+
+        val boardImages = boardImageRepository.findAll()
+
+        Assertions.assertEquals(2, boardImages.size)
+        Assertions.assertEquals("test1.txt", boardImages.get(0).originalFileName)
     }
 
     @Test
@@ -122,5 +130,47 @@ class BoardApiControllerTest {
         Assertions.assertEquals("test2.txt", boardImages.get(1).originalFileName)
     }
 
+    @DisplayName("조회 테스트 - Board 상세정보 조회")
+    @Test
+    fun `조회 테스트 - Board 상세정보 조회` () {
+        val file1 = MockMultipartFile("files", "test1.txt", "text/plain", "test1 - hello".byteInputStream(StandardCharsets.UTF_8))
+        val file2 = MockMultipartFile("files", "test2.txt", "text/plain", "test2 - hello".byteInputStream(StandardCharsets.UTF_8))
+
+        mockMvc.multipart("/api/boards/v2")
+        {
+            file(file1).file(file2)
+                .part(MockPart("title", "title1".toByteArray(StandardCharsets.UTF_8)))
+                .part(MockPart("content", "content1".toByteArray(StandardCharsets.UTF_8)))
+            headers {
+                header("Authorization", "bearer ".plus(token))
+            }
+        }
+            .andDo {
+                print()
+            }
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+
+        val boardId = boardRepository.findAll().get(0).id
+        val boardImages = boardImageRepository.findAll()
+
+        Assertions.assertEquals(2, boardImages.size)
+        Assertions.assertEquals("test1.txt", boardImages.get(0).originalFileName)
+        Assertions.assertEquals("test2.txt", boardImages.get(1).originalFileName)
+
+        mockMvc.get("/api/boards/{id}", boardId)
+        {
+            headers {
+                header("Authorization", "bearer ".plus(token))
+            }
+        }.andDo {
+            print()
+        }.andExpect {
+            status { isOk() }
+        }
+    }
 
 }

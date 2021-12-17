@@ -48,7 +48,7 @@ class BoardController (private val boardService: BoardService) {
         @AuthenticationPrincipal userDetails: UserDetailsImpl,
         @RequestParam title: String,
         @RequestParam content: String,
-        @RequestParam(required = false) files: List<MultipartFile>?): ResponseEntity<String> {
+        @RequestParam(required = false) files: List<MultipartFile>?) : ResponseEntity<String> {
 
         val member = userDetails.member
         boardService.saveBoardV2(member, title, content, files)

@@ -22,9 +22,6 @@ class Member (
     var password: String = password
         protected set
 
-    @OneToMany(mappedBy = "member")
-    val boards: MutableList<Board> = ArrayList()
-
     fun updateMember(memberDto: MemberDto) {
         this.username = memberDto.username
         this.password = memberDto.password
