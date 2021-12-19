@@ -19,9 +19,9 @@ class JwtTokenProvider(private val userDetailsServiceImpl: UserDetailsServiceImp
     val EXP_TIME = 1000 * 60 * 10
 
 
-    fun generateToken(username: String) {
+    fun generateToken(username: String): String {
         val now = Date()
-        Jwts.builder()
+        return Jwts.builder()
             .setSubject(username)
             .setIssuedAt(now)
             .setExpiration(Date(System.currentTimeMillis() + EXP_TIME))

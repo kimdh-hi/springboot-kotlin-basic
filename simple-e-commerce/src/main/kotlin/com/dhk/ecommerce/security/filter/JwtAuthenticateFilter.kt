@@ -28,7 +28,10 @@ class JwtAuthenticateFilter(private val jwtTokenProvider: JwtTokenProvider) : On
     ) {
 
         val requestURI = request.requestURI
-        if (WHITE_LIST.contains(requestURI)) return filterChain.doFilter(request, response)
+        if (WHITE_LIST.contains(requestURI)) {
+            println(requestURI)
+            return filterChain.doFilter(request, response)
+        }
 
         val authHeader: String? = request.getHeader(AUTHORIZATION_HEADER)
 
