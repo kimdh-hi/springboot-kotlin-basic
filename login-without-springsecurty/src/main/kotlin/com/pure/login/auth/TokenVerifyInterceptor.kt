@@ -3,6 +3,7 @@ package com.pure.login.auth
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
+import javax.naming.AuthenticationException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -18,7 +19,7 @@ class TokenVerifyInterceptor(
         val token: String? = JwtTokenExtractor.extract(request)
         token?.let {
             jwtUtils.verifyToken(it)
-        }
+        } ?: throw AuthenticationException("인증실패")
 
         return true
     }

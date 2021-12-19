@@ -27,12 +27,13 @@ class LoginUserArgumentResolver(
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?
     ): User? {
-
         val httpServletRequest: HttpServletRequest = webRequest.getNativeRequest(HttpServletRequest::class.java) as HttpServletRequest
+        // Http 요청에서 토큰추출
         val token = JwtTokenExtractor.extract(httpServletRequest)
+        // 토큰이 존재하는 경우
         token?.let {
-            if(jwtUtils.verifyToken(token)) {
-                val userId = jwtUtils.getClaim(token, "id")
+            if(jwtUtils.verifyToken(token)) { // 토큰검증
+                val userId = jwtUtils.getClaim(token, "id") // 검증된 토큰에서 id값을 뽑아서 User를 조회
                 return userRepository.findByIdOrNull(userId as Long)
             }
         }

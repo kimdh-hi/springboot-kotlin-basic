@@ -7,11 +7,9 @@ import com.pure.login.dto.request.SignupRequest
 import com.pure.login.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.client.HttpClientErrorException
 
-@RequestMapping("/user")
+@RequestMapping("/users")
 @RestController
 class UserController(private val userService: UserService) {
 
@@ -24,5 +22,8 @@ class UserController(private val userService: UserService) {
         = ResponseEntity.ok().body(userService.signin(signinRequest))
 
     @GetMapping("/me")
-    fun me(@LoginUser user: User?): ResponseEntity<User> = ResponseEntity.ok().body(user)
+    fun me(@LoginUser user: User?): ResponseEntity<User> {
+        println("/users/me 호출")
+        return ResponseEntity.ok().body(user)
+    }
 }
