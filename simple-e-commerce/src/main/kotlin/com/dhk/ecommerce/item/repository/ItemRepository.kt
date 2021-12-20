@@ -1,9 +1,11 @@
 package com.dhk.ecommerce.item.repository
 
 import com.dhk.ecommerce.item.domain.Item
-import org.springframework.data.repository.CrudRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
 
-interface ItemRepository: CrudRepository<Item, Long> {
+interface ItemRepository: JpaRepository<Item, Long>, ItemQueryRepository {
 
-    fun findByNameContaining(name: String): List<String>?
 }
