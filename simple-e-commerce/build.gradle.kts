@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 
 plugins {
     id("org.springframework.boot") version "2.5.7"
@@ -6,6 +7,10 @@ plugins {
     kotlin("jvm") version "1.5.31"
     kotlin("plugin.spring") version "1.5.31"
     kotlin("plugin.jpa") version "1.5.31"
+    kotlin("kapt") version "1.5.31"
+
+    id ("org.jetbrains.kotlin.plugin.allopen") version "1.5.31"
+    id ("org.jetbrains.kotlin.plugin.noarg") version "1.5.31"
 }
 
 group = "com.dhk"
@@ -35,7 +40,17 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-    implementation("io.jsonwebtoken:jjwt:0.9.1") // JWT Token
+    //======== JWT ========//
+    implementation("io.jsonwebtoken:jjwt:0.9.1")
+
+    //======== QueryDsl ========//
+    implementation("com.querydsl:querydsl-jpa")
+    kapt(group = "com.querydsl", name = "querydsl-apt", classifier = "jpa")
+    sourceSets.main {
+        withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
+            kotlin.srcDir("$buildDir/generated/source/kapt/main")
+        }
+    }
 
     runtimeOnly("com.h2database:h2")
     runtimeOnly("mysql:mysql-connector-java")
