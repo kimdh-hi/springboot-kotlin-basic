@@ -11,6 +11,8 @@ class User  (
     @Column(nullable = false)
     var username: String,
     @Column(nullable = false)
+    var nickname: String,
+    @Column(nullable = false)
     var password: String,
     @Embedded
     var address: Address,
@@ -18,7 +20,4 @@ class User  (
     @Enumerated(EnumType.STRING)
     var role: UserRole = UserRole.ROLE_USER,
 
-) : Timestamped() {
-
-
-}
+) : Timestamped()
