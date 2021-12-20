@@ -1,55 +1,53 @@
 package com.dhk.ecommerce.security.utils
 
-import com.dhk.ecommerce.security.service.UserDetailsServiceImpl
 import io.jsonwebtoken.Claims
+import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class JwtTokenProvider(private val userDetailsServiceImpl: UserDetailsServiceImpl) {
+class JwtTokenProvider {
 
     @Value("\$(jwt.token}")
     lateinit var JWT_TOKEN_SECRET: String
-
-    val SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256
     val EXP_TIME = 1000 * 60 * 10
 
 
-    fun generateToken(username: String): String {
-        val now = Date()
+    fun generateToken(userId: Long, username: String): String {
         return Jwts.builder()
             .setSubject(username)
-            .setIssuedAt(now)
+            .claim("userId", userId)
             .setExpiration(Date(System.currentTimeMillis() + EXP_TIME))
-            .signWith(SIGNATURE_ALGORITHM, JWT_TOKEN_SECRET)
+            .signWith(SignatureAlgorithm.HS256, JWT_TOKEN_SECRET)
             .compact()
     }
 
-    fun getUserDetails(token: String): UserDetails {
-        val username = getSubject(token)
-        return userDetailsServiceImpl.loadUserByUsername(username)
-    }
-
-    private fun getSubject(token: String): String {
-        val claims = getAllClaims(token)
-        return claims.subject
-    }
-
     fun verifyToken(token: String): Boolean {
-        val claims = getAllClaims(token)
-        val expiration = claims.expiration
-
-        return expiration.before(Date())
+        return try {
+            val claims = getAllClaims(token)
+            val expiration = claims.expiration
+            expiration.after(Date())
+        } catch (e: JwtException) {
+            false
+        } catch (e: IllegalArgumentException) {
+            false
+        }
     }
 
-    private fun getAllClaims(token: String) : Claims {
+    fun getUserIdFromClaims(token: String): Long {
+        val claims: Claims = getAllClaims(token)
+        when (val userId = claims["userId"]) {
+            is Number -> return userId.toLong()
+            else -> throw IllegalArgumentException("타입오류")
+        }
+    }
+
+    private fun getAllClaims(token: String): Claims {
         return Jwts.parser()
             .setSigningKey(JWT_TOKEN_SECRET)
-            .parseClaimsJwt(token)
-            .body
+            .parseClaimsJws(token).body
     }
 }

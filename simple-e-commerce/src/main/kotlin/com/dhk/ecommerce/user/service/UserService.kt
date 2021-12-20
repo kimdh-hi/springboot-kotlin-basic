@@ -4,13 +4,11 @@ import com.dhk.ecommerce.security.utils.JwtTokenProvider
 import com.dhk.ecommerce.user.domain.Address
 import com.dhk.ecommerce.user.domain.User
 import com.dhk.ecommerce.user.repository.UserRepository
-import com.dhk.ecommerce.user.service.dto.request.LoginRequestDto
+import com.dhk.ecommerce.user.service.dto.request.SigninRequestDto
 import com.dhk.ecommerce.user.service.dto.request.SignupRequestDto
 import com.dhk.ecommerce.user.service.dto.response.TokenResponseDto
-import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,12 +17,11 @@ import org.springframework.transaction.annotation.Transactional
 class UserService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
-    private val authenticationManager: AuthenticationManager,
     private val jwtTokenProvider: JwtTokenProvider
     ) {
 
     @Transactional
-    fun saveUser(signupRequestDto: SignupRequestDto) {
+    fun signup(signupRequestDto: SignupRequestDto) {
         signupRequestDto.password = passwordEncoder.encode(signupRequestDto.password)
         val user = User(
             null,
@@ -37,16 +34,13 @@ class UserService(
     }
 
     @Transactional(readOnly = true)
-    fun login(loginRequestDto: LoginRequestDto): TokenResponseDto {
-        try {
-            authenticationManager.authenticate(
-                UsernamePasswordAuthenticationToken(loginRequestDto.username, loginRequestDto.password, null)
-            )
-        } catch (e: BadCredentialsException) {
-            throw BadCredentialsException("로그인 실패")
-        }
-        val token = jwtTokenProvider.generateToken(loginRequestDto.username)
+    fun signin(loginRequestDto: SigninRequestDto): TokenResponseDto {
+        val user: User? = userRepository.findByUsername(loginRequestDto.username)
+        user?.let {
+            val matches = passwordEncoder.matches(loginRequestDto.password, user.password)
+            if (!matches) throw BadCredentialsException("인증실패")
+        } ?: throw UsernameNotFoundException("존재하지 않는 ID 입니다.")
 
-        return TokenResponseDto(token)
+        return TokenResponseDto(jwtTokenProvider.generateToken(user.userId as Long, user.username))
     }
 }
