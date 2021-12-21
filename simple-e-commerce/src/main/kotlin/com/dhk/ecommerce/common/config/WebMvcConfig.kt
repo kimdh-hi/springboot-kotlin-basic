@@ -1,6 +1,7 @@
 package com.dhk.ecommerce.common.config
 
 import com.dhk.ecommerce.security.AuthenticatedUserArgumentResolver
+import com.dhk.ecommerce.security.interceptor.RoleVerifyInterceptor
 import com.dhk.ecommerce.security.interceptor.TokenVerifyInterceptor
 import com.dhk.ecommerce.security.interceptor.UriMatcherInterceptor
 import org.springframework.context.annotation.Configuration
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration
 class WebMvcConfig(
     private val tokenVerifyInterceptor: TokenVerifyInterceptor,
+    private val roleVerifyInterceptor: RoleVerifyInterceptor,
     private val authenticatedUserArgumentResolver: AuthenticatedUserArgumentResolver) : WebMvcConfigurer{
 
 //    override fun addInterceptors(registry: InterceptorRegistry) {
@@ -22,10 +24,17 @@ class WebMvcConfig(
 //    }
 
     override fun addInterceptors(registry: InterceptorRegistry) {
-        val uriMatcherInterceptor = UriMatcherInterceptor(tokenVerifyInterceptor)
-        uriMatcherInterceptor.addPathPatterns("/items", HttpMethod.POST)
+        val uriMatcherInterceptor1 = UriMatcherInterceptor(roleVerifyInterceptor)
+        uriMatcherInterceptor1.addPathPatterns("/test/auth-test/seller", HttpMethod.GET)
 
-        registry.addInterceptor(uriMatcherInterceptor)
+        val uriMatcherInterceptor2 = UriMatcherInterceptor(tokenVerifyInterceptor)
+        uriMatcherInterceptor2.addPathPatterns("/items", HttpMethod.POST)
+        uriMatcherInterceptor2.addPathPatterns("/test/auth-test", HttpMethod.GET)
+
+        registry.addInterceptor(uriMatcherInterceptor1)
+            .order(1)
+        registry.addInterceptor(uriMatcherInterceptor2)
+            .order(2)
     }
 
     override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver>) {

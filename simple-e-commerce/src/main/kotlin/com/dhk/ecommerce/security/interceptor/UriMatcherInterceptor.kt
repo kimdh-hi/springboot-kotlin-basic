@@ -17,8 +17,6 @@ class UriMatcherInterceptor(
         val method = request.method
         val requestURI = request.requestURI
 
-        println("UriMatcherInterceptor method = $method, uri = $requestURI")
-
         for (uri in addPathPatterns.keys) {
             if (requestURI.equals(uri) && addPathPatterns[uri].toString() == method) {
                 return targetInterceptor.preHandle(request,response, handler)
