@@ -16,7 +16,7 @@ class ItemQueryRepositoryImpl(private val query: JPAQueryFactory): ItemQueryRepo
     override fun getItemList(offset: Int, limit: Int): List<Item> {
         return query.select(item)
             .from(item)
-            .leftJoin(item.thumbnailImage, itemImage)
+            .leftJoin(item.thumbnailImage, itemImage).fetchJoin()
             .offset(offset.toLong())
             .limit(limit.toLong())
             .orderBy(item.createdAt.desc())
@@ -27,10 +27,11 @@ class ItemQueryRepositoryImpl(private val query: JPAQueryFactory): ItemQueryRepo
      * 상품 상세정보 조회
      */
     override fun getItemDetail(itemId: Long): Item? {
-        return query.select(item)
+        return query.select(item).distinct()
             .from(item)
             .join(item.seller, user).fetchJoin()
-            .join(item.itemImages, itemImage).fetchJoin()
+            .join(item.thumbnailImage, itemImage).fetchJoin()
+            .leftJoin(item.itemImages, itemImage).fetchJoin()
             .where(item.itemId.eq(itemId))
             .fetchOne()
     }

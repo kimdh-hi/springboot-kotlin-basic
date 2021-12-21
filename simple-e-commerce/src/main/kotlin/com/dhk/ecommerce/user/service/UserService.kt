@@ -41,6 +41,6 @@ class UserService(
             if (!matches) throw BadCredentialsException("인증실패")
         } ?: throw UsernameNotFoundException("존재하지 않는 ID 입니다.")
 
-        return TokenResponseDto(jwtTokenProvider.generateToken(user.userId as Long, user.username))
+        return TokenResponseDto(jwtTokenProvider.generateToken(user.userId as Long, user.username, user.role.toString()))
     }
 }
