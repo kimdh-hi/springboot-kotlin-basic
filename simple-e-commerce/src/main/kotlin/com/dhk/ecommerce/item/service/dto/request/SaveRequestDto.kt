@@ -1,8 +1,8 @@
-package com.dhk.ecommerce.item.controller.dto.request
+package com.dhk.ecommerce.item.service.dto.request
 
 import org.springframework.web.multipart.MultipartFile
 
-data class SaveRequest (
+data class SaveRequestDto (
     var name: String,
     var description: String,
     var price: Int,

@@ -1,10 +1,13 @@
 package com.dhk.ecommerce.item.service
 
+import com.dhk.ecommerce.common.utils.S3Utils
 import com.dhk.ecommerce.item.domain.Item
 import com.dhk.ecommerce.item.repository.ItemRepository
+import com.dhk.ecommerce.item.service.dto.request.SaveRequestDto
 import com.dhk.ecommerce.item.service.dto.request.UpdateRequestDto
 import com.dhk.ecommerce.item.service.dto.response.ItemDetailsResponseDto
 import com.dhk.ecommerce.item.service.dto.response.ItemResponseDto
+import com.dhk.ecommerce.itemImage.domain.ItemImage
 import com.dhk.ecommerce.user.domain.User
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -13,7 +16,32 @@ import kotlin.IllegalArgumentException
 
 @Service
 @Transactional(readOnly = true)
-class ItemService(private val itemRepository: ItemRepository) {
+class ItemService(
+    private val itemRepository: ItemRepository,
+    private val s3Utils: S3Utils) {
+
+    val s3Dir: String = "static"
+
+    // 상품등록
+    @Transactional(readOnly = false)
+    fun saveItem(seller: User, dto: SaveRequestDto) {
+        val thumbnailImage = dto.thumbnailImage
+        val itemImages = dto.itemImages
+
+        val item = Item(null, dto.name, dto.description, dto.price, dto.stock, seller, null)
+
+        val thumbnailUploadedUrl = s3Utils.upload(thumbnailImage, s3Dir)
+        val uploadedUrlItemImage = ItemImage(null, thumbnailImage.originalFilename as String, thumbnailUploadedUrl, null)
+        item.thumbnailImage = uploadedUrlItemImage
+        
+        for (image in itemImages) {
+            val uploadedUrl = s3Utils.upload(image, s3Dir)
+            val itemImage = ItemImage(null, image.originalFilename as String, uploadedUrl, null)
+            item.addItemImage(itemImage)
+        }
+
+        itemRepository.save(item)
+    }
 
     // 목록조회 (페이징)
     fun getItemList(offset: Int, size: Int): List<ItemResponseDto> {

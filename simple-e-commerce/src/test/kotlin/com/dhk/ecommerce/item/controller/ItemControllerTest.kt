@@ -3,7 +3,6 @@ package com.dhk.ecommerce.item.controller
 import com.dhk.ecommerce.helper.ItemImageTestHelper
 import com.dhk.ecommerce.helper.ItemTestHelper
 import com.dhk.ecommerce.helper.UserTestHelper
-import com.dhk.ecommerce.item.controller.dto.request.SaveRequest
 import com.dhk.ecommerce.item.controller.dto.request.UpdateRequest
 import com.dhk.ecommerce.item.domain.Item
 import com.dhk.ecommerce.item.repository.ItemRepository
@@ -112,9 +111,6 @@ class ItemControllerTest {
         val itemImage2 = MockMultipartFile("itemImages", "itemImageFileName2", "plain/text", "itemImage2".byteInputStream(StandardCharsets.UTF_8))
         val itemImage3 = MockMultipartFile("itemImages", "itemImageFileName3", "plain/text", "itemImage3".byteInputStream(StandardCharsets.UTF_8))
 
-//        val saveRequest = SaveRequest("itemName111", "description111", 1000, 30)
-//        val saveRequestJson = objectMapper.writeValueAsString(saveRequest)
-
         mockMvc.multipart("/items")
         {
             header(HEADER_AUTH, BEARER_PREFIX + sellerToken)
@@ -123,7 +119,6 @@ class ItemControllerTest {
             file(itemImage1)
             file(itemImage2)
             file(itemImage3)
-//            part(MockPart("saveRequest", saveRequestJson.toByteArray()))
             part(MockPart("name", "testName".toByteArray()))
             part(MockPart("description", "desc".toByteArray()))
             part(MockPart("price", "1000".toByteArray()))
