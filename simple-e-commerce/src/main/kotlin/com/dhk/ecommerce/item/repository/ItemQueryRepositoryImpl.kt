@@ -30,9 +30,35 @@ class ItemQueryRepositoryImpl(private val query: JPAQueryFactory): ItemQueryRepo
         return query.select(item).distinct()
             .from(item)
             .join(item.seller, user).fetchJoin()
-            .join(item.thumbnailImage, itemImage).fetchJoin()
+            .leftJoin(item.thumbnailImage, itemImage).fetchJoin()
             .leftJoin(item.itemImages, itemImage).fetchJoin()
             .where(item.itemId.eq(itemId))
             .fetchOne()
+    }
+
+    /**
+     * 상품 이름으로 검색
+     */
+    override fun searchByName(name: String, offset: Int, limit: Int): List<Item> {
+        return query.select(item)
+            .from(item)
+            .leftJoin(item.thumbnailImage, itemImage).fetchJoin()
+            .where(item.name.contains(name))
+            .offset(offset.toLong())
+            .limit(limit.toLong())
+            .orderBy(item.createdAt.desc())
+            .fetch()
+    }
+
+    /**
+     * 상품의 주인인지 판별
+     */
+    override fun validItemOwner(userId: Long, itemId: Long): Boolean {
+        val result = query.selectOne()
+            .from(item)
+            .where(item.itemId.eq(itemId).and(item.seller.userId.eq(userId)))
+            .fetchFirst()
+
+        return result != null
     }
 }

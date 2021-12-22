@@ -46,9 +46,9 @@ class JwtTokenProvider {
             val expiration = claims.expiration // 만료기간 검증
             if (!expiration.after(Date())) return false
 
-            when(val role = claims["role"]) { // 권한검증
+            when(val role = claims["role"]) {
                 is String -> {
-                    return role.equals("ROLE_SELLER")
+                    return role.equals("ROLE_SELLER") // 권한검증
                 }
                 else -> throw IllegalArgumentException("타입에러")
             }

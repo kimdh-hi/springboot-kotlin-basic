@@ -7,10 +7,8 @@ import com.dhk.ecommerce.user.domain.Address
 import com.dhk.ecommerce.user.domain.User
 import com.dhk.ecommerce.user.domain.UserRole
 import com.dhk.ecommerce.user.repository.UserRepository
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
@@ -35,7 +33,7 @@ class ItemRepositoryFindListTest {
         val items: MutableList<Item> = mutableListOf()
         for(i in 1..100) {
             if (i==1) {
-                item = Item(null, "item$i", "desc$i", 10, 1000, seller1, null)
+                item = Item(null, "special-Item", "desc$i", 10, 1000, seller1, null)
                 item.addItemImage(ItemImage(null, "og1", "sv1", null))
                 item.addItemImage(ItemImage(null, "og2", "sv2", null))
                 item.addItemImage(ItemImage(null, "og3", "sv3", null))
@@ -51,13 +49,21 @@ class ItemRepositoryFindListTest {
 
     @DisplayName("상세정보 조회")
     @Test
-    fun test1() {
+    fun `상품상세정보 조회` () {
         val findItem = itemRepository.getItemDetail(item.itemId as Long)
-        findItem?.let {
-            val itemImages = findItem.itemImages
-            for (image in itemImages) {
-                println(image.originalFileName)
-            }
-        }
+
+        assertEquals(item.itemId, findItem?.itemId)
+        assertEquals(item.name, findItem?.name)
+        assertEquals(item.itemImages.size, findItem?.itemImages?.size)
+    }
+
+    @DisplayName("이름 검색")
+    @Test
+    fun `상품 이름을 검색` () {
+        val keyword = "special"
+
+        val items = itemRepository.searchByName(keyword,0 , 10)
+
+        assertEquals(1, items.size)
     }
 }

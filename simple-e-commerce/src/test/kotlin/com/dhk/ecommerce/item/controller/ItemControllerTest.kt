@@ -3,24 +3,27 @@ package com.dhk.ecommerce.item.controller
 import com.dhk.ecommerce.helper.ItemImageTestHelper
 import com.dhk.ecommerce.helper.ItemTestHelper
 import com.dhk.ecommerce.helper.UserTestHelper
+import com.dhk.ecommerce.item.controller.dto.request.UpdateRequest
 import com.dhk.ecommerce.item.domain.Item
 import com.dhk.ecommerce.item.repository.ItemRepository
-import com.dhk.ecommerce.itemImage.domain.ItemImage
+import com.dhk.ecommerce.security.utils.JwtTokenProvider
 import com.dhk.ecommerce.user.domain.User
-import com.dhk.ecommerce.user.domain.UserRole
 import com.dhk.ecommerce.user.repository.UserRepository
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.MediaType
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.multipart
+import org.springframework.test.web.servlet.put
 import org.springframework.transaction.annotation.Transactional
+import java.nio.charset.StandardCharsets
 
 @AutoConfigureMockMvc
 @Transactional
@@ -32,14 +35,25 @@ class ItemControllerTest {
     @Autowired lateinit var passwordEncoder: PasswordEncoder
     @Autowired lateinit var userRepository: UserRepository
     @Autowired lateinit var itemRepository: ItemRepository
+    @Autowired lateinit var objectMapper: ObjectMapper
+    @Autowired lateinit var jwtTokenProvider: JwtTokenProvider
     lateinit var item: Item
+    lateinit var user: User
+    lateinit var userToken: String
+    lateinit var seller: User
+    lateinit var sellerToken: String
+    val HEADER_AUTH = "Authorization"
+    val BEARER_PREFIX = "Bearer "
 
     @BeforeAll
     fun beforeAll() {
-        val user = UserTestHelper.createUser("user1", passwordEncoder.encode("test"), "경기도 부천시 오정구", "우리아파트 105동 1304호")
+        user = UserTestHelper.createUser("user1", passwordEncoder.encode("test"), "경기도 부천시 오정구", "우리아파트 105동 1304호")
         userRepository.save(user)
-        val seller = UserTestHelper.createSeller("seller1", passwordEncoder.encode("test"), "서울특별시 강서구", "좋은아파트 103동 101호")
+        userToken = jwtTokenProvider.generateToken(user.userId as Long, user.username, user.role.toString())
+
+        seller = UserTestHelper.createSeller("seller1", passwordEncoder.encode("test"), "서울특별시 강서구", "좋은아파트 103동 101호")
         userRepository.save(seller)
+        sellerToken = jwtTokenProvider.generateToken(seller.userId as Long, seller.username, seller.role.toString())
 
         val itemImage = ItemImageTestHelper.createItemImage("thumbnailFileName1", "thumbnailSavePath1")
         item = ItemTestHelper.createItem("item1", "item1 설명", 10_000, 100, seller, itemImage)
@@ -86,5 +100,62 @@ class ItemControllerTest {
             .andExpect {
                 status { isOk() }
             }
+    }
+
+    @DisplayName("POST /items 상품등록")
+    @Test
+    fun `상품등록` () {
+        val thumbnailImage = MockMultipartFile("thumbnailImage", "thumbnailImageFileName", "plain/text", "thumbnailImageTest".byteInputStream(StandardCharsets.UTF_8))
+        val itemImage1 = MockMultipartFile("itemImages", "itemImageFileName1", "plain/text", "itemImage1".byteInputStream(StandardCharsets.UTF_8))
+        val itemImage2 = MockMultipartFile("itemImages", "itemImageFileName2", "plain/text", "itemImage2".byteInputStream(StandardCharsets.UTF_8))
+        val itemImage3 = MockMultipartFile("itemImages", "itemImageFileName3", "plain/text", "itemImage3".byteInputStream(StandardCharsets.UTF_8))
+
+        mockMvc.multipart("/items")
+        {
+            header(HEADER_AUTH, BEARER_PREFIX + sellerToken)
+            file(thumbnailImage)
+            file(itemImage1)
+            file(itemImage2)
+            file(itemImage3)
+        }
+            .andExpect {
+                status { isOk() }
+            }
+            .andDo {
+                print()
+            }
+    }
+
+    @DisplayName("PUT /items/{itemId} 상품수정")
+    @Test
+    fun `상품수정` () {
+        val updateName = "updateName"
+        val updateDescription = "updateDescription"
+        val updatePrice = 999
+        val updateStock = 999
+        val updateRequest = UpdateRequest(updateName, updateDescription, updatePrice, updateStock)
+        val updateRequestJson = objectMapper.writeValueAsString(updateRequest)
+
+        mockMvc.put("/items/{itemId}", item.itemId)
+        {
+            contentType = MediaType.APPLICATION_JSON
+            content = updateRequestJson
+            headers {
+                header(HEADER_AUTH, BEARER_PREFIX + sellerToken)
+            }
+        }
+            .andExpect {
+                status { isOk() }
+            }
+            .andDo {
+                print()
+            }
+
+        val item = itemRepository.findByIdOrNull(item.itemId) as Item
+
+        Assertions.assertEquals(updateName, item.name)
+        Assertions.assertEquals(updateDescription, item.description)
+        Assertions.assertEquals(updatePrice, item.price)
+        Assertions.assertEquals(updateStock, item.stock)
     }
 }

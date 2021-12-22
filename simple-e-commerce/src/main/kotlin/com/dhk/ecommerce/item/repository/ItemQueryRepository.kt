@@ -9,4 +9,10 @@ interface ItemQueryRepository {
 
     // 상품 상세정보 조회
     fun getItemDetail(itemId: Long): Item?
+
+    // 상품이름으로 검색
+    fun searchByName(name: String, offset: Int, limit: Int): List<Item>
+
+    // 상품의 주인인지 판별
+    fun validItemOwner(userId: Long, itemId: Long): Boolean
 }
