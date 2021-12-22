@@ -3,6 +3,7 @@ package com.dhk.ecommerce.item.controller
 import com.dhk.ecommerce.helper.ItemImageTestHelper
 import com.dhk.ecommerce.helper.ItemTestHelper
 import com.dhk.ecommerce.helper.UserTestHelper
+import com.dhk.ecommerce.item.controller.dto.request.SaveRequest
 import com.dhk.ecommerce.item.controller.dto.request.UpdateRequest
 import com.dhk.ecommerce.item.domain.Item
 import com.dhk.ecommerce.item.repository.ItemRepository
@@ -17,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
+import org.springframework.mock.web.MockPart
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
@@ -110,13 +112,22 @@ class ItemControllerTest {
         val itemImage2 = MockMultipartFile("itemImages", "itemImageFileName2", "plain/text", "itemImage2".byteInputStream(StandardCharsets.UTF_8))
         val itemImage3 = MockMultipartFile("itemImages", "itemImageFileName3", "plain/text", "itemImage3".byteInputStream(StandardCharsets.UTF_8))
 
+//        val saveRequest = SaveRequest("itemName111", "description111", 1000, 30)
+//        val saveRequestJson = objectMapper.writeValueAsString(saveRequest)
+
         mockMvc.multipart("/items")
         {
             header(HEADER_AUTH, BEARER_PREFIX + sellerToken)
+            contentType = MediaType.MULTIPART_FORM_DATA
             file(thumbnailImage)
             file(itemImage1)
             file(itemImage2)
             file(itemImage3)
+//            part(MockPart("saveRequest", saveRequestJson.toByteArray()))
+            part(MockPart("name", "testName".toByteArray()))
+            part(MockPart("description", "desc".toByteArray()))
+            part(MockPart("price", "1000".toByteArray()))
+            part(MockPart("stock", "10".toByteArray()))
         }
             .andExpect {
                 status { isOk() }

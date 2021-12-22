@@ -1,5 +1,6 @@
 package com.dhk.ecommerce.item.controller
 
+import com.dhk.ecommerce.item.controller.dto.request.SaveRequest
 import com.dhk.ecommerce.item.controller.dto.request.UpdateRequest
 import com.dhk.ecommerce.item.service.ItemService
 import com.dhk.ecommerce.item.service.dto.response.ItemDetailsResponseDto
@@ -26,12 +27,11 @@ class ItemController(private val itemService: ItemService) {
 
     @PostMapping
     fun saveItem(@AuthenticatedUser user: User,
+                 @RequestParam name: String, @RequestParam description: String, @RequestParam price: Int, @RequestParam stock: Int,
                  @RequestParam thumbnailImage: MultipartFile, @RequestParam itemImages: List<MultipartFile>): ResponseEntity<String> {
 
-        println("thumbnailImage = ${thumbnailImage.name}")
-        for(image in itemImages) {
-            println("itemImage = ${image.name}")
-        }
+        val saveRequest = SaveRequest(name, description, price, stock, thumbnailImage, itemImages)
+
 
         return ResponseEntity.ok().body("ok")
     }
