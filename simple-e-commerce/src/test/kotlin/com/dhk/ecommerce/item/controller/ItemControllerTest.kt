@@ -19,10 +19,7 @@ import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.mock.web.MockPart
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.multipart
-import org.springframework.test.web.servlet.put
+import org.springframework.test.web.servlet.*
 import org.springframework.transaction.annotation.Transactional
 import java.nio.charset.StandardCharsets
 
@@ -43,7 +40,7 @@ class ItemControllerTest {
     lateinit var userToken: String
     lateinit var seller: User
     lateinit var sellerToken: String
-    val HEADER_AUTH = "Authorization"
+    val AUTH_HEADER = "Authorization"
     val BEARER_PREFIX = "Bearer "
 
     @BeforeAll
@@ -113,7 +110,7 @@ class ItemControllerTest {
 
         mockMvc.multipart("/items")
         {
-            header(HEADER_AUTH, BEARER_PREFIX + sellerToken)
+            header(AUTH_HEADER, BEARER_PREFIX + sellerToken)
             contentType = MediaType.MULTIPART_FORM_DATA
             file(thumbnailImage)
             file(itemImage1)
@@ -147,7 +144,7 @@ class ItemControllerTest {
             contentType = MediaType.APPLICATION_JSON
             content = updateRequestJson
             headers {
-                header(HEADER_AUTH, BEARER_PREFIX + sellerToken)
+                header(AUTH_HEADER, BEARER_PREFIX + sellerToken)
             }
         }
             .andExpect {
@@ -163,5 +160,21 @@ class ItemControllerTest {
         Assertions.assertEquals(updateDescription, item.description)
         Assertions.assertEquals(updatePrice, item.price)
         Assertions.assertEquals(updateStock, item.stock)
+    }
+
+    @DisplayName("DELETE /items/{itemId} 상품삭제")
+    @Test
+    fun `상품삭제` () {
+
+        mockMvc.delete("/items/{itemId}", item.itemId)
+        {
+            header(AUTH_HEADER, BEARER_PREFIX + sellerToken)
+        }
+            .andExpect {
+                status { isOk() }
+            }
+            .andDo {
+                print()
+            }
     }
 }

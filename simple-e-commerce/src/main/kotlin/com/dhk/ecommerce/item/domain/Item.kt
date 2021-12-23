@@ -42,12 +42,14 @@ class Item (
     }
 
     // 재고감소
-    fun decreaseStock() {
+    fun decreaseStock(qty: Int = 1) {
         if (this.stock <= 0) throw RuntimeException("재고가 부족합니다.")
-        --this.stock
+        this.stock -= qty
     }
     // 재고증가
-    fun increaseStock() = ++this.stock
+    fun increaseStock(qty: Int = 1) {
+        this.stock += qty
+    }
 
     // 양방향 연관관계 편의 메서드
     fun addItemImage(itemImage: ItemImage) {

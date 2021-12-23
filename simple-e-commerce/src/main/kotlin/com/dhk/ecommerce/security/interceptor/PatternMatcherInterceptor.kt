@@ -9,9 +9,11 @@ class PatternMatcherInterceptor(
     var targetInterceptor: HandlerInterceptor, // 적용될 인터셉터
 ) : HandlerInterceptor {
 
-    var addPathPatterns: MutableMap<String, HttpMethod> = mutableMapOf() // 인터셉터를 적용조건 <요청URI, 요청메서드>
+    var addPathPatterns: MutableMap<String, List<HttpMethod>> = mutableMapOf() // 인터셉터를 적용조건 <요청URI, 요청메서드>
 
-    fun addPathPatterns(uri: String, httpMethod: HttpMethod) = this.addPathPatterns.put(uri, httpMethod)
+    fun addPathPatterns(uri: String, vararg httpMethod: HttpMethod) {
+        addPathPatterns.put(uri, httpMethod.asList())
+    }
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         val method = request.method

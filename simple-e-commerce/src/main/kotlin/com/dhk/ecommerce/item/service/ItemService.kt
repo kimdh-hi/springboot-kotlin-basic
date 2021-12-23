@@ -82,6 +82,14 @@ class ItemService(
     }
 
     // 상품삭제
+    @Transactional(readOnly = false)
+    fun deleteItem(userId: Long, itemId: Long) {
+        if (!validItemOwner(userId, itemId)) throw IllegalArgumentException("상품을 삭제할 수 없습니다.")
+
+        itemRepository.deleteById(itemId)
+    }
+
+
     private fun validItemOwner(userId: Long, itemId: Long): Boolean = itemRepository.validItemOwner(userId, itemId)
 
     private fun itemsToItemsResponseDto(items: List<Item>): List<ItemResponseDto> {

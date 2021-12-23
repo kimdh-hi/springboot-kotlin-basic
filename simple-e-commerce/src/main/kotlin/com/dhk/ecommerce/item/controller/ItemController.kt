@@ -45,4 +45,14 @@ class ItemController(private val itemService: ItemService) {
 
         return ResponseEntity.ok().body("수정완료")
     }
+
+    @DeleteMapping("/{itemId}")
+    fun deleteItem(@AuthenticatedUser user: User, @PathVariable itemId: Long): ResponseEntity<String> {
+
+        itemService.deleteItem(user.userId as Long, itemId)
+
+        return ResponseEntity.ok().body("삭제완료")
+    }
+
+
 }

@@ -19,15 +19,16 @@ class WebMvcConfig(
     override fun addInterceptors(registry: InterceptorRegistry) {
         val patternMatcherInterceptor1 = PatternMatcherInterceptor(roleVerifyInterceptor) // 판매자 권한 검증을 위한 인터셉터
         patternMatcherInterceptor1.addPathPatterns("/test/auth-test/seller", HttpMethod.GET)
-        patternMatcherInterceptor1.addPathPatterns("/items/**", HttpMethod.PUT)
-        patternMatcherInterceptor1.addPathPatterns("/items/**", HttpMethod.POST)
+        patternMatcherInterceptor1.addPathPatterns("/items", HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE)
 
         val patternMatcherInterceptor2 = PatternMatcherInterceptor(tokenVerifyInterceptor) // 일반 검증 인터셉터
-        patternMatcherInterceptor2.addPathPatterns("/items", HttpMethod.POST)
         patternMatcherInterceptor2.addPathPatterns("/test/auth-test", HttpMethod.GET)
+        patternMatcherInterceptor2.addPathPatterns("/orders", HttpMethod.POST)
 
         registry.addInterceptor(patternMatcherInterceptor1)
+            .addPathPatterns("/**")
         registry.addInterceptor(patternMatcherInterceptor2)
+            .addPathPatterns("/**")
     }
 
     override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver>) {
