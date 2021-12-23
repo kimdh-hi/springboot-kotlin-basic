@@ -1,5 +1,6 @@
 package com.dhk.ecommerce.item.controller
 
+import com.dhk.ecommerce.common.dto.response.PageResponseV2
 import com.dhk.ecommerce.item.service.dto.request.SaveRequestDto
 import com.dhk.ecommerce.item.controller.dto.request.UpdateRequest
 import com.dhk.ecommerce.item.service.ItemService
@@ -17,8 +18,9 @@ class ItemController(private val itemService: ItemService) {
 
     @GetMapping
     fun getItems(
-        @RequestParam(defaultValue = "0") offset: Int, @RequestParam(defaultValue = "10") size: Int
-    ): ResponseEntity<List<ItemResponseDto>> = ResponseEntity.ok().body(itemService.getItemList(offset, size))
+        @RequestParam(defaultValue = "5") size: Int,
+        @RequestParam(required = false) lastId: Long?
+    ): ResponseEntity<PageResponseV2<ItemResponseDto>> = ResponseEntity.ok().body(itemService.getItemList(lastId, size))
 
     @GetMapping("/{itemId}")
     fun getItemDetails(

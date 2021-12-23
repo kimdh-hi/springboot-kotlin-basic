@@ -70,6 +70,11 @@ class ItemControllerTest {
 
         val itemImage2 = ItemImageTestHelper.createItemImage("thumbnailFileName2", "thumbnailSavePath2")
         val item2 = ItemTestHelper.createItem("item2", "item2 설명", 20_000, 500, seller, itemImage2)
+        val item3 = ItemTestHelper.createItem("item3", "item3 설명", 20_000, 500, seller, itemImage2)
+        val item4 = ItemTestHelper.createItem("item4", "item4 설명", 20_000, 500, seller, itemImage2)
+        val item5 = ItemTestHelper.createItem("item5", "item5 설명", 20_000, 500, seller, itemImage2)
+        val item6 = ItemTestHelper.createItem("item6", "item6 설명", 20_000, 500, seller, itemImage2)
+        val item7 = ItemTestHelper.createItem("item7", "item7 설명", 20_000, 500, seller, itemImage2)
         itemRepository.save(item2)
     }
 

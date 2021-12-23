@@ -6,6 +6,7 @@ import com.dhk.ecommerce.itemImage.domain.QItemImage
 import com.dhk.ecommerce.itemImage.domain.QItemImage.itemImage
 import com.dhk.ecommerce.user.domain.QUser
 import com.dhk.ecommerce.user.domain.QUser.user
+import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
 
 class ItemQueryRepositoryImpl(private val query: JPAQueryFactory): ItemQueryRepository {
@@ -13,13 +14,13 @@ class ItemQueryRepositoryImpl(private val query: JPAQueryFactory): ItemQueryRepo
     /**
      * 상품 목록조회
      */
-    override fun getItemList(offset: Int, limit: Int): List<Item> {
+    override fun getItemList(lastItemId: Long?, limit: Int): List<Item> {
         return query.select(item)
             .from(item)
             .leftJoin(item.thumbnailImage, itemImage).fetchJoin()
-            .offset(offset.toLong())
+            .where(ltItemId(lastItemId))
             .limit(limit.toLong())
-            .orderBy(item.createdAt.desc())
+            .orderBy(item.itemId.desc())
             .fetch()
     }
 
@@ -60,5 +61,11 @@ class ItemQueryRepositoryImpl(private val query: JPAQueryFactory): ItemQueryRepo
             .fetchFirst()
 
         return result != null
+    }
+
+    fun ltItemId(itemId: Long?): BooleanExpression? {
+        itemId?.let {
+            return item.itemId.lt(itemId)
+        } ?: return null
     }
 }

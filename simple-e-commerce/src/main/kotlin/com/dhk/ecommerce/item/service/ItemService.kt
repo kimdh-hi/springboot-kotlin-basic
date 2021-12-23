@@ -1,5 +1,6 @@
 package com.dhk.ecommerce.item.service
 
+import com.dhk.ecommerce.common.dto.response.PageResponseV2
 import com.dhk.ecommerce.common.utils.S3Utils
 import com.dhk.ecommerce.item.domain.Item
 import com.dhk.ecommerce.item.repository.ItemRepository
@@ -44,9 +45,14 @@ class ItemService(
     }
 
     // 목록조회 (페이징)
-    fun getItemList(offset: Int, size: Int): List<ItemResponseDto> {
-        val items: List<Item> = itemRepository.getItemList(offset, size)
-        return itemsToItemsResponseDto(items)
+    fun getItemList(lastId: Long?, size: Int): PageResponseV2<ItemResponseDto> {
+        val items: List<Item> = itemRepository.getItemList(lastId, size)
+        val itemsToItemsResponseDto = items.map {
+            ItemResponseDto(it.name, it.description, it.price, it.stock, it.thumbnailImage?.savedFileName)
+        }
+        val lastItemId = items.last().itemId
+
+        return PageResponseV2<ItemResponseDto>(itemsToItemsResponseDto, lastItemId as Long)
     }
 
     // 상세정보 조회 (이미지 포함)
