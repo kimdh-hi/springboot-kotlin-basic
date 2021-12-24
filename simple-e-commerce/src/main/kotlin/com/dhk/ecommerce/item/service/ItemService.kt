@@ -45,8 +45,21 @@ class ItemService(
     }
 
     // 목록조회 (페이징)
-    fun getItemList(lastId: Long?, size: Int): PageResponseV2<ItemResponseDto> {
-        val items: List<Item> = itemRepository.getItemList(lastId, size)
+    fun getItemList(lastId: Long?, limit: Int, query: String?): PageResponseV2<ItemResponseDto> {
+        query?.let {
+            return getItemListBySearch(lastId, limit, query)
+        }
+        val items: List<Item> = itemRepository.getItemList(lastId, limit)
+        val itemsToItemsResponseDto = items.map {
+            ItemResponseDto(it.name, it.description, it.price, it.stock, it.thumbnailImage?.savedFileName)
+        }
+        val lastItemId = items.last().itemId
+
+        return PageResponseV2<ItemResponseDto>(itemsToItemsResponseDto, lastItemId as Long)
+    }
+
+    private fun getItemListBySearch(lastId: Long?, limit: Int, query: String): PageResponseV2<ItemResponseDto> {
+        val items = itemRepository.searchByName(query, lastId, limit)
         val itemsToItemsResponseDto = items.map {
             ItemResponseDto(it.name, it.description, it.price, it.stock, it.thumbnailImage?.savedFileName)
         }
@@ -70,12 +83,6 @@ class ItemService(
                 }
             )
         } ?: throw IllegalArgumentException("존재하지 않는 상품입니다.")
-    }
-
-    // 상품이름 조회
-    fun searchItemByName(name: String, offset: Int, size: Int): List<ItemResponseDto> {
-        val items = itemRepository.searchByName(name, offset, size)
-        return itemsToItemsResponseDto(items)
     }
 
     // 상품정보 변경 (제목, 설명, 가격, 재고)

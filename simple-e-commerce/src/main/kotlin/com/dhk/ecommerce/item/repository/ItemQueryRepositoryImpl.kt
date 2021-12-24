@@ -18,7 +18,7 @@ class ItemQueryRepositoryImpl(private val query: JPAQueryFactory): ItemQueryRepo
         return query.select(item)
             .from(item)
             .leftJoin(item.thumbnailImage, itemImage).fetchJoin()
-            .where(ltItemId(lastItemId))
+            .where(itemIdLessThen(lastItemId)) // 이전 요청의 마지막 pk값보다 작은 곳부터 조회되도록 한다.
             .limit(limit.toLong())
             .orderBy(item.itemId.desc())
             .fetch()
@@ -40,14 +40,14 @@ class ItemQueryRepositoryImpl(private val query: JPAQueryFactory): ItemQueryRepo
     /**
      * 상품 이름으로 검색
      */
-    override fun searchByName(name: String, offset: Int, limit: Int): List<Item> {
+    override fun searchByName(name: String, lastItemId: Long?, limit: Int): List<Item> {
         return query.select(item)
             .from(item)
             .leftJoin(item.thumbnailImage, itemImage).fetchJoin()
-            .where(item.name.contains(name))
-            .offset(offset.toLong())
+            .where(itemIdLessThen(lastItemId))
+            .where(item.name.like("%" + name + "%"))
             .limit(limit.toLong())
-            .orderBy(item.createdAt.desc())
+            .orderBy(item.itemId.desc())
             .fetch()
     }
 
@@ -63,7 +63,7 @@ class ItemQueryRepositoryImpl(private val query: JPAQueryFactory): ItemQueryRepo
         return result != null
     }
 
-    fun ltItemId(itemId: Long?): BooleanExpression? {
+    fun itemIdLessThen(itemId: Long?): BooleanExpression? {
         itemId?.let {
             return item.itemId.lt(itemId)
         } ?: return null

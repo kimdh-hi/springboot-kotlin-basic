@@ -69,19 +69,29 @@ class ItemControllerTest {
         item = itemRepository.save(item)
 
         val itemImage2 = ItemImageTestHelper.createItemImage("thumbnailFileName2", "thumbnailSavePath2")
+        val itemImage3 = ItemImageTestHelper.createItemImage("thumbnailFileName2", "thumbnailSavePath2")
+        val itemImage4 = ItemImageTestHelper.createItemImage("thumbnailFileName2", "thumbnailSavePath2")
+        val itemImage5 = ItemImageTestHelper.createItemImage("thumbnailFileName2", "thumbnailSavePath2")
+        val itemImage6 = ItemImageTestHelper.createItemImage("thumbnailFileName2", "thumbnailSavePath2")
+        val itemImage7 = ItemImageTestHelper.createItemImage("thumbnailFileName2", "thumbnailSavePath2")
         val item2 = ItemTestHelper.createItem("item2", "item2 설명", 20_000, 500, seller, itemImage2)
-        val item3 = ItemTestHelper.createItem("item3", "item3 설명", 20_000, 500, seller, itemImage2)
-        val item4 = ItemTestHelper.createItem("item4", "item4 설명", 20_000, 500, seller, itemImage2)
-        val item5 = ItemTestHelper.createItem("item5", "item5 설명", 20_000, 500, seller, itemImage2)
-        val item6 = ItemTestHelper.createItem("item6", "item6 설명", 20_000, 500, seller, itemImage2)
-        val item7 = ItemTestHelper.createItem("item7", "item7 설명", 20_000, 500, seller, itemImage2)
+        val item3 = ItemTestHelper.createItem("iphone10", "item3 설명", 20_000, 500, seller, itemImage3)
+        val item4 = ItemTestHelper.createItem("item4", "item4 설명", 20_000, 500, seller, itemImage4)
+        val item5 = ItemTestHelper.createItem("item5", "item5 설명", 20_000, 500, seller, itemImage5)
+        val item6 = ItemTestHelper.createItem("item6", "item6 설명", 20_000, 500, seller, itemImage6)
+        val item7 = ItemTestHelper.createItem("item7", "item7 설명", 20_000, 500, seller, itemImage7)
         itemRepository.save(item2)
+        itemRepository.save(item3)
+        itemRepository.save(item4)
+        itemRepository.save(item5)
+        itemRepository.save(item6)
+        itemRepository.save(item7)
     }
 
     @DisplayName("GET /items 상품 목록조회")
     @Test
     fun `목록조회` () {
-        mockMvc.get("/items")
+        mockMvc.get("/items?lastId=3")
         {
 
         }
@@ -90,6 +100,21 @@ class ItemControllerTest {
             }
             .andDo {
                 print()
+            }
+    }
+
+    @Test
+    @DisplayName("/GET /items 상품 목록검색")
+    fun `검색조회` () {
+        val query: String = "iphone"
+        mockMvc.get("/items?search=${query}")
+            .andDo {
+                print()
+            }
+            .andExpect {
+                status {
+                    isOk()
+                }
             }
     }
 

@@ -18,9 +18,10 @@ class ItemController(private val itemService: ItemService) {
 
     @GetMapping
     fun getItems(
-        @RequestParam(defaultValue = "5") size: Int,
-        @RequestParam(required = false) lastId: Long?
-    ): ResponseEntity<PageResponseV2<ItemResponseDto>> = ResponseEntity.ok().body(itemService.getItemList(lastId, size))
+        @RequestParam(defaultValue = "5") limit: Int,
+        @RequestParam(required = false) lastId: Long?,
+        @RequestParam(required = false) search: String?
+    ): ResponseEntity<PageResponseV2<ItemResponseDto>> = ResponseEntity.ok().body(itemService.getItemList(lastId, limit, search))
 
     @GetMapping("/{itemId}")
     fun getItemDetails(
@@ -55,6 +56,4 @@ class ItemController(private val itemService: ItemService) {
 
         return ResponseEntity.ok().body("삭제완료")
     }
-
-
 }
