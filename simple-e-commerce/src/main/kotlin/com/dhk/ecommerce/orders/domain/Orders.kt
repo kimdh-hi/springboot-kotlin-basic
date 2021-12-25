@@ -11,8 +11,6 @@ import javax.persistence.*
 class Orders (
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var orderId: Long? = null,
-    @Enumerated(EnumType.STRING)
-    var orderStatus: OrderStatus = OrderStatus.ORDERED,
     @Embedded
     var address: Address,
 
@@ -25,7 +23,7 @@ class Orders (
     companion object {
 
         fun createOrder(user: User, address: Address, orderItems: MutableList<OrderItem>): Orders {
-            val order = Orders(null, OrderStatus.ORDERED, address, user)
+            val order = Orders(null, address, user)
             for(orderItem in orderItems) {
                 order.addOrderItem(orderItem)
             }
@@ -40,9 +38,6 @@ class Orders (
     }
 
     fun cancel() {
-        if (this.orderStatus.equals(OrderStatus.COMPLETED)) IllegalStateException("취소 불가한 주문입니다.")
-
-        this.orderStatus = OrderStatus.CANCELED
         orderItems.forEach {
             it.cancel()
         }

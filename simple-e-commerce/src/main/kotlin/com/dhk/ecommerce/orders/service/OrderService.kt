@@ -1,10 +1,13 @@
 package com.dhk.ecommerce.orders.service
 
+import com.dhk.ecommerce.common.dto.response.PageResponseV2
 import com.dhk.ecommerce.item.repository.ItemRepository
 import com.dhk.ecommerce.orderItem.domain.OrderItem
 import com.dhk.ecommerce.orders.domain.Orders
 import com.dhk.ecommerce.orders.repository.OrderRepository
 import com.dhk.ecommerce.orders.service.dto.request.OrderRequestDto
+import com.dhk.ecommerce.orders.service.dto.response.OrderItemResponseDto
+import com.dhk.ecommerce.orders.service.dto.response.OrderResponseDto
 import com.dhk.ecommerce.user.domain.Address
 import com.dhk.ecommerce.user.domain.User
 import org.springframework.data.repository.findByIdOrNull
@@ -37,8 +40,28 @@ class OrderService(
     }
 
     // 나의 주문목록 조회
-    fun getMyOrders(user: User) {
+    fun getMyOrders(user: User, lastOrderId: Long?, limit: Int): PageResponseV2<OrderResponseDto> {
+        val orders = orderRepository.getMyOrders(user.userId as Long, lastOrderId, limit)
 
+        val orderResponseDto = orders.map {
+            OrderResponseDto(
+                it.orderId,
+                it.createdAt,
+                it.orderItems.map {
+                    OrderItemResponseDto(
+                        it.orderItemId,
+                        it.orderStatus.toString(),
+                        it.item.itemId,
+                        it.item.thumbnailImage?.savedFileName ?: "default image",
+                        it.item.name,
+                        it.quantity,
+                        it.orderPrice,
+                        it.totalPrice())
+                }
+            )
+        }
+
+        return PageResponseV2(orderResponseDto, orders.last().orderId)
     }
 
     // 주문 상세보기

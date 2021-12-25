@@ -82,6 +82,5 @@ class OrdersControllerTest {
         assertEquals(testItem.stock, item.stock - 10)
         assertEquals(1, testOrder.size)
         assertEquals(user.address, testOrder.get(0).address)
-        assertEquals(OrderStatus.ORDERED, testOrder.get(0).orderStatus)
     }
 }
