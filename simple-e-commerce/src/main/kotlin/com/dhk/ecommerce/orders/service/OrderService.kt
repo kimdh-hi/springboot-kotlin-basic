@@ -42,6 +42,7 @@ class OrderService(
     // 나의 주문목록 조회
     fun getMyOrders(user: User, lastOrderId: Long?, limit: Int): PageResponseV2<OrderResponseDto> {
         val orders = orderRepository.getMyOrders(user.userId as Long, lastOrderId, limit)
+        if (orders.isEmpty()) return PageResponseV2(emptyList(), 0)
 
         val orderResponseDto = orders.map {
             OrderResponseDto(
@@ -61,10 +62,30 @@ class OrderService(
             )
         }
 
-        return PageResponseV2(orderResponseDto, orders.last().orderId)
+        return PageResponseV2(orderResponseDto, orders.last().orderId as Long)
     }
 
     // 주문 상세보기
+    fun getMyOrder(orderId: Long): OrderResponseDto {
+        val orders = orderRepository.getMyOder(orderId)
+        return orders?.let {
+            OrderResponseDto(
+                it.orderId,
+                it.createdAt,
+                it.orderItems.map {
+                    OrderItemResponseDto(
+                        it.orderItemId,
+                        it.orderStatus.toString(),
+                        it.item.itemId,
+                        it.item.thumbnailImage?.savedFileName ?: "default image",
+                        it.item.name,
+                        it.quantity,
+                        it.orderPrice,
+                        it.totalPrice())
+                }
+            )
+        } ?: throw IllegalArgumentException("존재하지 않는 주문입니다.")
+    }
 
     // 주문정보 수정 (배송이 완료되지 않은 경우)
 

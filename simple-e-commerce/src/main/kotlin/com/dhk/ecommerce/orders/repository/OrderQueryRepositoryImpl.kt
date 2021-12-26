@@ -24,6 +24,20 @@ class OrderQueryRepositoryImpl(private val query: JPAQueryFactory): OrderQueryRe
             .fetch()
     }
 
+    override fun getMyOder(orderId: Long): Orders? {
+        return query.select(orders)
+            .from(orders)
+            .join(orders.orderItems, orderItem).fetchJoin()
+            .where(orderIdEquals(orderId))
+            .fetchOne()
+    }
+
+    fun orderIdEquals(orderId: Long?): BooleanExpression? {
+        orderId?.let {
+            return orders.orderId.eq(orderId)
+        } ?: return null
+    }
+
     fun orderIdLessThen(orderId: Long?): BooleanExpression? {
         orderId?.let {
             return orders.orderId.lt(orderId)
