@@ -1,9 +1,7 @@
 package com.comments.article.domain
 
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
+import com.comments.user.domain.Account
+import javax.persistence.*
 
 @Entity
 class Article (
@@ -12,4 +10,8 @@ class Article (
     var id: Long?,
     var title: String,
     var content: String,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    var account: Account
 )
